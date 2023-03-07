@@ -34,6 +34,10 @@
    shorebird publish
    ```
 
+That's it 🎉
+
+Once a new release has been published, all applications will automatically update the next time they are launched.
+
 ## Contributing
 
 If you're interested in contributing, please join us on
