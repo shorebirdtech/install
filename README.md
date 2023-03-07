@@ -4,7 +4,7 @@
 
 ## Getting Started 🚀
 
-1. 🔑 Request an API Key
+1. 🔑 Request an API Key (coming soon...)
 1. 🐦 Install Shorebird
 
    ```
