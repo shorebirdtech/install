@@ -31,11 +31,7 @@
 1. ☁️ Publish a new release
 
    ```bash
-   # Publish the default release
    shorebird publish
-
-   # Publish a specific release
-   shorebird publish <path/to/libapp.so>
    ```
 
 ## Contributing
