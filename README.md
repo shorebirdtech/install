@@ -1,2 +1,1 @@
-# install
-The Shorebird (un)installer 🐦
+# Shorebird (un)installer
