@@ -8,7 +8,11 @@
 1. 🐦 Install Shorebird
 
    ```
-   dart pub global activate --source git https://github.com/shorebirdtech/shorebird --git-path packages/shorebird_cli
+   # Clone Shorebird
+   git clone https://github.com/shorebirdtech/shorebird
+
+   # Activate the Shorebird CLI
+   dart pub global activate --source path shorebird/packages/shorebird_cli
    ```
 
 1. 🔐 Login
@@ -18,6 +22,20 @@
    ? Please enter your API Key: <API-KEY>
    ✓ Logging into shorebird.dev (7ms)
    You are now logged in.
+   ```
+
+1. ✨ Initialize Shorebird
+
+   ```bash
+   # Initialize shorebird in the current directory.
+   # This will generate a `shorebird.yaml` configuration file.
+   shorebird init
+   ```
+
+1. 📱 Create a new app
+
+   ```bash
+   shorebird apps create
    ```
 
 1. 📦 Create a new build
