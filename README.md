@@ -5,7 +5,7 @@
 ## Getting Started 🚀
 
 1. 🔑 Request an API Key (coming soon...)
-1. 🐦 Install Shorebird
+1. 🐦 Install the Shorebird CLI
 
    ```
    # Clone Shorebird
@@ -55,6 +55,14 @@
 That's it 🎉
 
 Once a new release has been published, all applications will automatically update the next time they are launched.
+
+View all apps and their latest releases and patches using the `shorebird apps list` command:
+
+```
+shorebird apps list
+my_counter: v1.0.0 (patch #1)
+my_example: v2.1.0 (patch #2)
+```
 
 ## Contributing
 
