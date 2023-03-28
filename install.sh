@@ -13,13 +13,13 @@ add_shorebird_to_path() {
   # Check if using zsh
   if [ -z "${ZSH_VERSION}" ]; then
     echo "Updating ~/.zshrc"
-    echo "export PATH=\"$(install_dir)/bin:\$PATH\"" >> ~/.zshrc    
-    sched +1 'source ~/.zshrc'
+    echo "export PATH=\"$(install_dir)/bin:\$PATH\"" >> ~/.zshrc
+    exec zsh && source ~/.zshrc && rehash
   # Check if using bash
   elif [ -z "${BASH_VERSION}" ]; then
     echo "Updating ~/.bashrc"
-    echo "export PATH=\"$(install_dir)/bin:\$PATH\"" >> ~/.bashrc    
-    sched +1 'source ~/.bashrc'
+    echo "export PATH=\"$(install_dir)/bin:\$PATH\"" >> ~/.bashrc
+    exec bash && source ~/.bashrc
   else
     echo "Unable to determine shell type. Please add Shorebird to your PATH manually."
     echo "export PATH=\"$(install_dir)/bin:\$PATH\""
@@ -51,4 +51,12 @@ case :$PATH:
   *) add_shorebird_to_path >&2;;
 esac
 
-echo "🐦 Shorebird has been installed!"
+echo "
+🐦 Shorebird has been installed!
+
+To get started, run the following command:
+
+  shorebird --help
+
+For more information, visit https://github.com/shorebirdtech/shorebird.
+";
