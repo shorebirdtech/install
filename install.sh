@@ -12,11 +12,15 @@ add_shorebird_to_path() {
   
   # Check if using zsh
   if [ -z "${ZSH_VERSION}" ]; then
+    echo "Updating ~/.zshrc"
     echo "export PATH=\"$(install_dir)/bin:\$PATH\"" >> ~/.zshrc
-    zsh && source ~/.zshrc
+    exec zsh
+    source ~/.zshrc
   # Check if using bash
   elif [ -z "${BASH_VERSION}" ]; then
+    echo "Updating ~/.bashrc"
     echo "export PATH=\"$(install_dir)/bin:\$PATH\"" >> ~/.bashrc
+    exec bash
     source ~/.bashrc
   else
     echo "Unable to determine shell type. Please add Shorebird to your PATH manually."
@@ -41,13 +45,15 @@ echo "Cloning Shorebird into $(install_dir)"
 git clone https://github.com/shorebirdtech/shorebird.git -b stable "$(install_dir)"
 
 
-SHOREBIRD_BIN="$(install_dir)/bin"
-echo "Checking if $SHOREBIRD_BIN is in your PATH"
-case :$PATH:
-   in *:$SHOREBIRD_BIN:*) ;; # do nothing, it's there
-     *) add_shorebird_to_path >&2;;
-esac
+
+echo "Shorebird has been installed."
 
 # Build Shorebird
 echo "Building Shorebird"
-shorebird
+eval $(install_dir)/bin/shorebird
+
+SHOREBIRD_BIN="$(install_dir)/bin"
+case :$PATH:
+  in *:$SHOREBIRD_BIN:*) ;; # do nothing, it's there
+  *) add_shorebird_to_path >&2;;
+esac
