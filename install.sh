@@ -41,7 +41,7 @@ echo "Cloning Shorebird into $(install_dir)"
 git clone https://github.com/shorebirdtech/shorebird.git -b stable "$(install_dir)"
 
 # Build Shorebird
-eval $(install_dir)/bin/shorebird --version
+(cd "$(install_dir)" && ./bin/shorebird --version)
 
 RELOAD_REQUIRED=false
 SHOREBIRD_BIN="$(install_dir)/bin"
@@ -57,7 +57,7 @@ echo "\n🐦 Shorebird has been installed!"
 if [ "$RELOAD_REQUIRED" = true ]; then
   echo "
 Close and reopen your terminal to start using Shorebird or run the following command to start using it now:
-  
+
   export PATH=\"$(install_dir)/bin:\$PATH\""
 fi
 
