@@ -14,7 +14,7 @@ add_shorebird_to_path() {
   if [ -z "${ZSH_VERSION}" ]; then
     echo "Updating ~/.zshrc"
     echo "export PATH=\"$(install_dir)/bin:\$PATH\"" >> ~/.zshrc
-    exec zsh && source ~/.zshrc && rehash
+    exec zsh && source ~/.zshrc
   # Check if using bash
   elif [ -z "${BASH_VERSION}" ]; then
     echo "Updating ~/.bashrc"
