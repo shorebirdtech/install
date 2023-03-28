@@ -9,15 +9,15 @@ install_dir() {
 add_shorebird_to_path() {
   # Add the Shorebird CLI to your PATH.
   echo "Adding Shorebird to your PATH"
-  
+
   # Check if using zsh
   if [ -z "${ZSH_VERSION}" ]; then
-    echo "export PATH=\"$(install_dir)/bin:\$PATH\"" >> ~/.zshrc
-    zsh && source ~/.zshrc
+    echo "Updating ~/.zshrc"
+    echo "export PATH=\"$(install_dir)/bin:\$PATH\"" >>~/.zshrc
   # Check if using bash
   elif [ -z "${BASH_VERSION}" ]; then
-    echo "export PATH=\"$(install_dir)/bin:\$PATH\"" >> ~/.bashrc
-    source ~/.bashrc
+    echo "Updating ~/.bashrc"
+    echo "export PATH=\"$(install_dir)/bin:\$PATH\"" >>~/.bashrc
   else
     echo "Unable to determine shell type. Please add Shorebird to your PATH manually."
     echo "export PATH=\"$(install_dir)/bin:\$PATH\""
@@ -32,7 +32,7 @@ fi
 
 # Test if Git is available on the Host
 if ! hash git 2>/dev/null; then
-  >&2 echo "Error: Unable to find git in your PATH."
+  echo >&2 "Error: Unable to find git in your PATH."
   exit 1
 fi
 
@@ -40,14 +40,31 @@ fi
 echo "Cloning Shorebird into $(install_dir)"
 git clone https://github.com/shorebirdtech/shorebird.git -b stable "$(install_dir)"
 
+# Build Shorebird
+eval $(install_dir)/bin/shorebird --version
 
+RELOAD_REQUIRED=false
 SHOREBIRD_BIN="$(install_dir)/bin"
-echo "Checking if $SHOREBIRD_BIN is in your PATH"
-case :$PATH:
-   in *:$SHOREBIRD_BIN:*) ;; # do nothing, it's there
-     *) add_shorebird_to_path >&2;;
+case :$PATH: in *:$SHOREBIRD_BIN:*) ;; # do nothing, it's there
+*)
+  RELOAD_REQUIRED=true
+  add_shorebird_to_path >&2
+  ;;
 esac
 
-# Build Shorebird
-echo "Building Shorebird"
-shorebird
+echo "\n🐦 Shorebird has been installed!"
+
+if [ "$RELOAD_REQUIRED" = true ]; then
+  echo "
+Close and reopen your terminal to start using Shorebird or run the following command to start using it now:
+  
+  export PATH=\"$(install_dir)/bin:\$PATH\""
+fi
+
+echo "
+To get started, run the following command:
+
+  shorebird --help
+
+For more information, visit https://github.com/shorebirdtech/shorebird.
+"
