@@ -4,15 +4,11 @@
 
 ## Getting Started 🚀
 
-1. 🔑 Request an API Key (coming soon...)
+1. 🔑 [Request an API Key](https://forms.gle/xyNMHqHnDYF4HBPPA)
 1. 🐦 Install the Shorebird CLI
 
    ```
-   # Clone Shorebird
-   git clone https://github.com/shorebirdtech/shorebird
-
-   # Activate the Shorebird CLI
-   dart pub global activate --source path shorebird/packages/shorebird_cli
+   curl --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/shorebirdtech/install/main/install.sh -sSf | sh
    ```
 
 1. ✨ Initialize Shorebird
