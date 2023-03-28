@@ -52,7 +52,8 @@ case :$PATH: in *:$SHOREBIRD_BIN:*) ;; # do nothing, it's there
   ;;
 esac
 
-echo "\n🐦 Shorebird has been installed!"
+echo ""
+echo "🐦 Shorebird has been installed!"
 
 if [ "$RELOAD_REQUIRED" = true ]; then
   echo "
