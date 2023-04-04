@@ -13,14 +13,14 @@ add_shorebird_to_path() {
   # Check if using zsh
   if [ -z "${ZSH_VERSION}" ]; then
     echo "Updating ~/.zshrc"
-    echo "export PATH=\"$(install_dir)/shorebird/bin:\$PATH\"" >>~/.zshrc
+    echo "export PATH=\"$(install_dir)/bin:\$PATH\"" >>~/.zshrc
   # Check if using bash
   elif [ -z "${BASH_VERSION}" ]; then
     echo "Updating ~/.bashrc"
-    echo "export PATH=\"$(install_dir)/shorebird/bin:\$PATH\"" >>~/.bashrc
+    echo "export PATH=\"$(install_dir)/bin:\$PATH\"" >>~/.bashrc
   else
     echo "Unable to determine shell type. Please add Shorebird to your PATH manually."
-    echo "export PATH=\"$(install_dir)/shorebird/bin:\$PATH\""
+    echo "export PATH=\"$(install_dir)/bin:\$PATH\""
   fi
 }
 
@@ -37,17 +37,14 @@ if ! hash git 2>/dev/null; then
 fi
 
 # Clone the Shorebird repository into the install_dir
-echo "Cloning Shorebird into $(install_dir)/shorebird"
-git clone https://github.com/shorebirdtech/shorebird.git -b stable "$(install_dir)/shorebird"
-
-echo "Cloning Shorebird's Flutter into $(install_dir)/flutter"
-git clone --filter=tree:0 https://github.com/shorebirdtech/flutter.git -b stable "$(install_dir)/flutter"
+echo "Cloning Shorebird into $(install_dir)"
+git clone https://github.com/shorebirdtech/shorebird.git -b stable "$(install_dir)"
 
 # Build Shorebird
-(cd "$(install_dir)" && ./shorebird/bin/shorebird --version)
+(cd "$(install_dir)" && ./bin/shorebird --version)
 
 RELOAD_REQUIRED=false
-SHOREBIRD_BIN="$(install_dir)/shorebird/bin"
+SHOREBIRD_BIN="$(install_dir)/bin"
 case :$PATH: in *:$SHOREBIRD_BIN:*) ;; # do nothing, it's there
 *)
   RELOAD_REQUIRED=true
@@ -62,7 +59,7 @@ if [ "$RELOAD_REQUIRED" = true ]; then
   echo "
 Close and reopen your terminal to start using Shorebird or run the following command to start using it now:
 
-  export PATH=\"$(install_dir)/shorebird/bin:\$PATH\""
+  export PATH=\"$(install_dir)/bin:\$PATH\""
 fi
 
 echo "
