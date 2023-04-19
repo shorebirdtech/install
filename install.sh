@@ -67,5 +67,6 @@ To get started, run the following command:
 
   shorebird --help
 
-For more information, visit https://github.com/shorebirdtech/shorebird.
+For more information, visit:
+https://github.com/shorebirdtech/shorebird/blob/main/TRUSTED_TESTERS.md.
 "
