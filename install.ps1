@@ -7,8 +7,7 @@ if (Test-Path $installDirectory) {
 
 Write-Output "Installing Shorebird to $installDirectory..."
 
-# & git clone https://github.com/shorebirdtech/shorebird.git -b stable $installDirectory
-& git clone https://github.com/shorebirdtech/shorebird.git -b bo/flutter-batch-files $installDirectory
+& git clone https://github.com/shorebirdtech/shorebird.git -b stable $installDirectory
 
 Push-Location $installDirectory\bin
 & .\shorebird.ps1 --version
