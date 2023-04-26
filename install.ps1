@@ -21,6 +21,5 @@ To get started, add $installDirectory\bin to your PATH environment variable and 
 
 shorebird --help
 
-For more information, visit:
-https://github.com/shorebirdtech/shorebird/blob/main/TRUSTED_TESTERS.md.
+For more information, visit https://docs.shorebird.dev
 "@
