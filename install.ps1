@@ -2,7 +2,7 @@ $installDirectory = [IO.Path]::Combine($home, ".shorebird")
 
 function Update-Path {
     $path = [Environment]::GetEnvironmentVariable("PATH", "User")
-    if ($path -contains $installDirectory) {
+    if ($path.contains($installDirectory)) {
         return $false
     }
     [Environment]::SetEnvironmentVariable(
