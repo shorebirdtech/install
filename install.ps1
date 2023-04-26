@@ -1,5 +1,17 @@
 $installDirectory = [IO.Path]::Combine($home, ".shorebird")
 
+function Update-Path {
+    $path = [Environment]::GetEnvironmentVariable("PATH", "User")
+    if ($path.contains($installDirectory)) {
+        return $false
+    }
+    [Environment]::SetEnvironmentVariable(
+        "Path", $path + [IO.Path]::PathSeparator + $installDirectory, "User"
+    )
+
+    return $true
+}
+
 if (Test-Path $installDirectory) {
     Write-Output "Shorebird is already installed."
     return
@@ -13,10 +25,22 @@ Push-Location $installDirectory\bin
 & .\shorebird.ps1 --version
 Pop-Location
 
-Write-Output @"
-🐦 Shorebird has been installed!"
+$wasPathUpdated = Update-Path
 
-To get started, add $installDirectory\bin to your PATH environment variable and run the following command:
+Write-Output @"
+
+🐦 Shorebird has been installed!
+
+"@
+
+if ($wasPathUpdated) {
+    Write-Output @"
+Please restart your terminal to start using Shorebird.
+"@
+}
+
+Write-Output @"
+To get started, run the following command:
 
 shorebird --help
 
