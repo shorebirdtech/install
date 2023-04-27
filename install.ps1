@@ -27,10 +27,12 @@ Push-Location $installDirectory\bin
 Pop-Location
 
 $wasPathUpdated = Update-Path
+# 1F426 is the code for 🐦. See https://unicode.org/emoji/charts/full-emoji-list.html#1f426.
+$birdEmoji = [System.Char]::ConvertFromUtf32([System.Convert]::toInt32("1F426",16))
 
 Write-Output @"
 
-Shorebird has been installed!
+$birdEmoji Shorebird has been installed!
 
 "@
 
