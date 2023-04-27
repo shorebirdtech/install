@@ -10,15 +10,16 @@ add_shorebird_to_path() {
   # Add the Shorebird CLI to your PATH.
   echo "Adding Shorebird to your PATH"
 
-  # Check if using zsh
-  if [ -z "${ZSH_VERSION}" ]; then
-    echo "Updating ~/.zshrc"
-    echo "export PATH=\"$(install_dir)/bin:\$PATH\"" >>~/.zshrc
-  # Check if using bash
-  elif [ -z "${BASH_VERSION}" ]; then
-    echo "Updating ~/.bashrc"
-    echo "export PATH=\"$(install_dir)/bin:\$PATH\"" >>~/.bashrc
-  else
+  rc_files=("$HOME/.bashrc" "$HOME/.zshrc")
+  for rc_file in ${rc_files[@]}; do
+    if [[ -e "$rc_file" ]]; then
+      found_rc_file=true
+      echo "Updating $rc_file"
+      echo "export PATH=\"$(install_dir)/bin:\$PATH\"" >>$rc_file
+    fi
+  done
+
+  if [[ ! $found_rc_file ]]; then
     echo "Unable to determine shell type. Please add Shorebird to your PATH manually."
     echo "export PATH=\"$(install_dir)/bin:\$PATH\""
   fi
