@@ -5,8 +5,9 @@ function Update-Path {
     if ($path.contains($installDirectory)) {
         return $false
     }
+    $binPath = [IO.Path]::Combine($installDirectory, "bin")
     [Environment]::SetEnvironmentVariable(
-        "Path", $path + [IO.Path]::PathSeparator + $installDirectory, "User"
+        "Path", $path + [IO.Path]::PathSeparator + $binPath, "User"
     )
 
     return $true
