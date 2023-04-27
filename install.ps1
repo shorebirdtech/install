@@ -30,7 +30,7 @@ $wasPathUpdated = Update-Path
 
 Write-Output @"
 
-🐦 Shorebird has been installed!
+Shorebird has been installed!
 
 "@
 
