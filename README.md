@@ -11,7 +11,7 @@ curl --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/shorebirdtech/
 
 ### Windows
 ```powershell
-powershell -exec bypass -c "(New-Object Net.WebClient).Proxy.Credentials=[Net.CredentialCache]::DefaultNetworkCredentials;iwr('https://raw.githubusercontent.com/shorebirdtech/install/main/install.ps1')|iex"
+$ powershell -exec bypass -c "(New-Object Net.WebClient).Proxy.Credentials=[Net.CredentialCache]::DefaultNetworkCredentials;iwr -UseBasicParsing 'https://raw.githubusercontent.com/shorebirdtech/install/main/install.ps1'|iex"
 ```
 
 📚 Refer to the [Shorebird CLI documentation](https://github.com/shorebirdtech/shorebird/blob/main/packages/shorebird_cli/README.md) for more information.
