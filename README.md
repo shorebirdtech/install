@@ -1,21 +1,6 @@
 # Shorebird (un)installer
 
-**❗️ Note: This project is under heavy development. Things will change frequently and none of the code is ready for production use. We will do our best to keep the documentation up-to-date.**
-
-## 🐦 Installing Shorebird
-
-### Mac/Linux
-```bash
-curl --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/shorebirdtech/install/main/install.sh -sSf | sh
-```
-
-### Windows
-```powershell
-powershell -exec bypass -c "(New-Object Net.WebClient).Proxy.Credentials=[Net.CredentialCache]::DefaultNetworkCredentials;iwr('https://raw.githubusercontent.com/shorebirdtech/install/main/install.ps1')|iex"
-```
-
-📚 Refer to the [Shorebird CLI documentation](https://github.com/shorebirdtech/shorebird/blob/main/packages/shorebird_cli/README.md) for more information.
-
+Installation instructions are available at https://docs.shorebird.dev.
 
 ## Contributing
 
