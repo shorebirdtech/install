@@ -13,7 +13,6 @@ function Update-Path {
     return $true
 }
 
-# Check if run with --force
 $force = $false
 if ($args -contains "--force") {
     $force = $true

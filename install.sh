@@ -25,10 +25,9 @@ add_shorebird_to_path() {
   fi
 }
 
-if [ "$1" = "--force" ] || [ "$1" = "-f" ]; then
+FORCE=false
+if [ "$1" = "--force" ]; then
   FORCE=true
-else
-  FORCE=false
 fi
 
 # Test if Git is available on the Host
