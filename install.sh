@@ -25,6 +25,12 @@ add_shorebird_to_path() {
   fi
 }
 
+if [ "$1" = "--force" ] || [ "$1" = "-f" ]; then
+  FORCE=true
+else
+  FORCE=false
+fi
+
 # Test if Git is available on the Host
 if ! hash git 2>/dev/null; then
   echo >&2 "Error: Unable to find git in your PATH."
@@ -33,8 +39,13 @@ fi
 
 # Check if install_dir already exists
 if [ -d "$(install_dir)" ]; then
-  echo "Existing Shorebird installation detected. Overwriting..."
-  rm -rf "$(install_dir)"
+  if [ "$FORCE" = true ]; then
+    echo "Existing Shorebird installation detected. Overwriting..."
+    rm -rf "$(install_dir)"
+  else
+    echo >&2 "Error: Existing Shorebird installation detected. Use --force to overwrite."
+    exit 1
+  fi
 fi
 
 # Clone the Shorebird repository into the install_dir

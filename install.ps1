@@ -13,9 +13,20 @@ function Update-Path {
     return $true
 }
 
+# Check if run with --force
+$force = $false
+if ($args -contains "--force") {
+    $force = $true
+}
+
 if (Test-Path $installDirectory) {
-    Write-Output "Existing Shorebird installation detected. Overwriting..."
-    Remove-Item -Recurse -Force $installDirectory
+    if ($force) {
+        Write-Output "Existing Shorebird installation detected. Overwriting..."
+        Remove-Item -Recurse -Force $installDirectory
+    } else {
+        Write-Output "Error: Existing Shorebird installation detected. Use --force to overwrite."
+        return
+    }
 }
 
 Write-Output "Installing Shorebird to $installDirectory..."
