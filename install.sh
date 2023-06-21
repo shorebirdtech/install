@@ -26,7 +26,7 @@ add_shorebird_to_path() {
 }
 
 FORCE=false
-if [ "$1" = "--force" ]; then
+if [[ "$*" == *"--force"* ]]; then
   FORCE=true
 fi
 

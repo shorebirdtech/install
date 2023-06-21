@@ -13,10 +13,7 @@ function Update-Path {
     return $true
 }
 
-$force = $false
-if ($args -contains "--force") {
-    $force = $true
-}
+$force = $args -contains "--force"
 
 if (Test-Path $installDirectory) {
     if ($force) {
