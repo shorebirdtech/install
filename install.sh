@@ -27,8 +27,8 @@ add_shorebird_to_path() {
 
 # Check if install_dir already exists
 if [ -d "$(install_dir)" ]; then
-  echo "Shorebird is already installed."
-  exit 1
+  echo "Existing Shorebird installation detected. Overwriting..."
+  rm -rf "$(install_dir)"
 fi
 
 # Test if Git is available on the Host
