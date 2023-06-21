@@ -19,12 +19,12 @@ jobs:
       - name: 📚 Git Checkout
         uses: actions/checkout@v3
 
-      - name: 📦 Install Shorebird CLI
+      - name: 📦 Install Shorebird CLI (bash)
         if: matrix.os == 'macos-latest' || matrix.os == 'ubuntu-latest'
         run: ./install.sh
         shell: bash
 
-      - name: 📦 Install Shorebird CLI
+      - name: 📦 Install Shorebird CLI (powershell)
         if: matrix.os == 'windows-latest'
         run: ./install.ps1
         shell: pwsh
