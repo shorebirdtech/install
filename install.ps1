@@ -1,5 +1,14 @@
 $installDirectory = [IO.Path]::Combine($home, ".shorebird")
 
+function Test-GitInstalled {
+    if (Get-Command git -ErrorAction SilentlyContinue) {
+        Write-Debug "Git is installed."
+    } else {
+        Write-Output "No git installation detected. Git is required to use shorebird."
+        exit 1
+    }
+}
+
 function Update-Path {
     $path = [Environment]::GetEnvironmentVariable("PATH", "User")
     if ($path.contains($installDirectory)) {
@@ -12,6 +21,8 @@ function Update-Path {
 
     return $true
 }
+
+Test-GitInstalled
 
 $force = $args -contains "--force"
 
