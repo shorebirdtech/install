@@ -1,4 +1,6 @@
-$installDirectory = [IO.Path]::Combine($home, ".shorebird")
+param (
+    [string]$InstallDirectory = "$env:USERPROFILE\.shorebird"
+)
 
 function Test-GitInstalled {
     if (Get-Command git -ErrorAction SilentlyContinue) {
