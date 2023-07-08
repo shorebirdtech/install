@@ -1,5 +1,5 @@
 param (
-    [string]$InstallDirectory = "$env:USERPROFILE\.shorebird"
+    [string]$InstallDirectory = "$home\.shorebird"
 )
 
 function Test-GitInstalled {
