@@ -25,7 +25,7 @@ add_shorebird_to_path() {
   fi
 }
 
-# Function to compare two Semantic Versioning (SemVer) versions
+# Function to compare two major.minor.patch versions
 # Returns:
 #   0 - If version1 is equal to version2
 #   1 - If version1 is older than version2
@@ -90,11 +90,9 @@ version_compare "$MIN_GIT_VERSION" "$GIT_VERSION"
 GIT_VERSION_COMPARISON=$?
 set -e
 if [ $GIT_VERSION_COMPARISON -eq 2 ]; then
-  echo "Error: system git version ($GIT_VERSION) is older than required ($MIN_GIT_VERSION)."
+  echo >&2 "Error: system git version ($GIT_VERSION) is older than required ($MIN_GIT_VERSION)."
   exit 1
 fi
-
-exit 0
 
 # Check if install_dir already exists
 if [ -d "$(install_dir)" ]; then
