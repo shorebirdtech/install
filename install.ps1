@@ -9,6 +9,40 @@ function Test-GitInstalled {
     }
 }
 
+function Compare-SemVer {
+    param (
+        [string]$version1,
+        [string]$version2
+    )
+
+    $version1Components = $version1 -split '\.'
+    $version2Components = $version2 -split '\.'
+
+    for ($i = 0; $i -lt 3; $i++) {
+        $version1Number = [int]$version1Components[$i]
+        $version2Number = [int]$version2Components[$i]
+
+        if ($version1Number -lt $version2Number) {
+            return -1
+        } elseif ($version1Number -gt $version2Number) {
+            return 1
+        }
+    }
+
+    return 0
+}
+
+function Test-GitVersion {
+    $minGitVersion = "2.37.1"
+    $gitVersion = (Get-Command git).FileVersionInfo.ProductVersion
+
+    $comparisonResult = Compare-SemVer -version1 $gitVersion -version2 $minGitVersion
+    if ($comparisonResult -eq -1) {
+        Write-Output "Installed version $installedVersion is older than required version $requiredVersion."
+        exit 1
+    }
+}
+
 function Update-Path {
     $path = [Environment]::GetEnvironmentVariable("PATH", "User")
     if ($path.contains($installDirectory)) {
@@ -23,6 +57,7 @@ function Update-Path {
 }
 
 Test-GitInstalled
+Test-GitVersion
 
 $force = $args -contains "--force"
 
