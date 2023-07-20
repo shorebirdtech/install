@@ -11,24 +11,80 @@ function Test-GitInstalled {
 
 function Compare-SemVer {
     param (
-        [string]$version1,
-        [string]$version2
+        [string]$Version1,
+        [string]$Version2
     )
 
-    $version1Components = $version1 -split '\.'
-    $version2Components = $version2 -split '\.'
-
-    for ($i = 0; $i -lt 3; $i++) {
-        $version1Number = [int]$version1Components[$i]
-        $version2Number = [int]$version2Components[$i]
-
-        if ($version1Number -lt $version2Number) {
-            return -1
-        } elseif ($version1Number -gt $version2Number) {
-            return 1
+    function Parse-SemVer {
+        param (
+            [string]$Version
+        )
+    
+        $versionPattern = '^(\d+)\.(\d+)\.(\d+)(?:-([\w.-]+))?(?:\+([\w.-]+))?$'
+        if ($Version -match $versionPattern) {
+            $major = [int]$Matches[1]
+            $minor = [int]$Matches[2]
+            $patch = [int]$Matches[3]
+            $preRelease = $Matches[4]
+            $buildMetadata = $Matches[5]
+    
+            [PSCustomObject]@{
+                Major = $major
+                Minor = $minor
+                Patch = $patch
+                PreRelease = $preRelease
+                BuildMetadata = $buildMetadata
+            }
+        }
+        else {
+            Write-Host "Invalid version format: $Version"
+            return $null
         }
     }
+    
+    $ver1 = Parse-SemVer -Version $Version1
+    $ver2 = Parse-SemVer -Version $Version2
+    
+    if ($ver1 -eq $null -or $ver2 -eq $null) {
+        Write-Host "Unable to compare versions. Please ensure both versions are in SemVer format."
+        return
+    }
 
+    if ($ver1.Major -gt $ver2.Major) {
+        return 1
+    }
+    elseif ($ver1.Major -lt $ver2.Major) {
+        return -1
+    }
+    
+    if ($ver1.Minor -gt $ver2.Minor) {
+        return 1
+    }
+    elseif ($ver1.Minor -lt $ver2.Minor) {
+        return -1
+    }
+    
+    if ($ver1.Patch -gt $ver2.Patch) {
+        return 1
+    }
+    elseif ($ver1.Patch -lt $ver2.Patch) {
+        return -1
+    }
+    
+    # If both versions are equal up to this point, check for pre-release versions
+    if ($ver1.PreRelease -and !$ver2.PreRelease) {
+        return -1
+    }
+    elseif (!$ver1.PreRelease -and $ver2.PreRelease) {
+        return 1
+    }
+    elseif ($ver1.PreRelease -and $ver2.PreRelease) {
+        $preComp = [System.StringComparer]::OrdinalIgnoreCase.Compare($ver1.PreRelease, $ver2.PreRelease)
+        if ($preComp -ne 0) {
+            return $preComp
+        }
+    }
+    
     return 0
 }
 
