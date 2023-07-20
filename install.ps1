@@ -3,88 +3,34 @@ $installDirectory = [IO.Path]::Combine($home, ".shorebird")
 function Test-GitInstalled {
     if (Get-Command git -ErrorAction SilentlyContinue) {
         Write-Debug "Git is installed."
-    } else {
+    }
+    else {
         Write-Output "No git installation detected. Git is required to use shorebird."
         exit 1
     }
 }
 
-function Compare-SemVer {
+function Compare-GitVersions {
     param (
-        [string]$Version1,
-        [string]$Version2
+        [string]$version1,
+        [string]$version2
     )
 
-    function Parse-SemVer {
-        param (
-            [string]$Version
-        )
-    
-        $versionPattern = '^(\d+)\.(\d+)\.(\d+)(?:-([\w.-]+))?(?:\+([\w.-]+))?$'
-        if ($Version -match $versionPattern) {
-            $major = [int]$Matches[1]
-            $minor = [int]$Matches[2]
-            $patch = [int]$Matches[3]
-            $preRelease = $Matches[4]
-            $buildMetadata = $Matches[5]
-    
-            [PSCustomObject]@{
-                Major = $major
-                Minor = $minor
-                Patch = $patch
-                PreRelease = $preRelease
-                BuildMetadata = $buildMetadata
-            }
+    $version1Components = $version1 -split '\.'
+    $version2Components = $version2 -split '\.'
+
+    for ($i = 0; $i -lt 3; $i++) {
+        $version1Number = [int]$version1Components[$i]
+        $version2Number = [int]$version2Components[$i]
+
+        if ($version1Number -lt $version2Number) {
+            return -1
         }
-        else {
-            Write-Host "Invalid version format: $Version"
-            return $null
+        elseif ($version1Number -gt $version2Number) {
+            return 1
         }
-    }
-    
-    $ver1 = Parse-SemVer -Version $Version1
-    $ver2 = Parse-SemVer -Version $Version2
-    
-    if ($ver1 -eq $null -or $ver2 -eq $null) {
-        Write-Host "Unable to compare versions. Please ensure both versions are in SemVer format."
-        return
     }
 
-    if ($ver1.Major -gt $ver2.Major) {
-        return 1
-    }
-    elseif ($ver1.Major -lt $ver2.Major) {
-        return -1
-    }
-    
-    if ($ver1.Minor -gt $ver2.Minor) {
-        return 1
-    }
-    elseif ($ver1.Minor -lt $ver2.Minor) {
-        return -1
-    }
-    
-    if ($ver1.Patch -gt $ver2.Patch) {
-        return 1
-    }
-    elseif ($ver1.Patch -lt $ver2.Patch) {
-        return -1
-    }
-    
-    # If both versions are equal up to this point, check for pre-release versions
-    if ($ver1.PreRelease -and !$ver2.PreRelease) {
-        return -1
-    }
-    elseif (!$ver1.PreRelease -and $ver2.PreRelease) {
-        return 1
-    }
-    elseif ($ver1.PreRelease -and $ver2.PreRelease) {
-        $preComp = [System.StringComparer]::OrdinalIgnoreCase.Compare($ver1.PreRelease, $ver2.PreRelease)
-        if ($preComp -ne 0) {
-            return $preComp
-        }
-    }
-    
     return 0
 }
 
@@ -92,9 +38,9 @@ function Test-GitVersion {
     $minGitVersion = "2.37.1"
     $gitVersion = (Get-Command git).FileVersionInfo.ProductVersion
 
-    $comparisonResult = Compare-SemVer -version1 $gitVersion -version2 $minGitVersion
+    $comparisonResult = Compare-GitVersions -version1 $gitVersion -version2 $minGitVersion
     if ($comparisonResult -eq -1) {
-        Write-Output "Installed version $installedVersion is older than required version $requiredVersion."
+        Write-Output "Installed version $gitVersion is older than required version $minGitVersion."
         exit 1
     }
 }
@@ -121,7 +67,8 @@ if (Test-Path $installDirectory) {
     if ($force) {
         Write-Output "Existing Shorebird installation detected. Overwriting..."
         Remove-Item -Recurse -Force $installDirectory
-    } else {
+    }
+    else {
         Write-Output "Error: Existing Shorebird installation detected. Use --force to overwrite."
         return
     }
@@ -137,7 +84,7 @@ Pop-Location
 
 $wasPathUpdated = Update-Path
 # 1F426 is the code for 🐦. See https://unicode.org/emoji/charts/full-emoji-list.html#1f426.
-$birdEmoji = [System.Char]::ConvertFromUtf32([System.Convert]::toInt32("1F426",16))
+$birdEmoji = [System.Char]::ConvertFromUtf32([System.Convert]::toInt32("1F426", 16))
 
 Write-Output @"
 
