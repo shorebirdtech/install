@@ -25,6 +25,53 @@ add_shorebird_to_path() {
   fi
 }
 
+# Function to compare two Semantic Versioning (SemVer) versions
+# Returns:
+#   0 - If version1 is equal to version2
+#   1 - If version1 is older than version2
+#   2 - If version1 is newer than version2
+# With help from copilot :)
+version_compare () {
+  # Get the two versions as arguments
+  local version1=$1
+  local version2=$2
+
+  # Split the versions into their major, minor, and patch components
+  local major1=${version1%%.*}
+  local minor1=${version1#*.}
+  minor1=${minor1%%.*}
+  local patch1=${version1##*.}
+
+  local major2=${version2%%.*}
+  local minor2=${version2#*.}
+  minor2=${minor2%%.*}
+  local patch2=${version2##*.}
+
+  # Compare major versions
+  if [ "$major1" -lt "$major2" ]; then
+    return 1
+  elif [ "$major1" -gt "$major2" ]; then
+    return 2
+  else
+    # Major versions are the same, compare minor versions
+    if [ "$minor1" -lt "$minor2" ]; then
+      return 1
+    elif [ "$minor1" -gt "$minor2" ]; then
+      return 2
+    else
+      # Minor versions are the same, compare patch versions
+      if [ "$patch1" -lt "$patch2" ]; then
+        return 1
+      elif [ "$patch1" -gt "$patch2" ]; then
+        return 2
+      else
+        # Patch versions are the same
+        return 0
+      fi
+    fi
+  fi
+}
+
 FORCE=false
 if [[ "$*" == *"--force"* ]]; then
   FORCE=true
@@ -35,6 +82,19 @@ if ! hash git 2>/dev/null; then
   echo >&2 "Error: Unable to find git in your PATH."
   exit 1
 fi
+
+MIN_GIT_VERSION="2.37.1"
+GIT_VERSION=$(git --version | awk '{print $3}')
+set +e
+version_compare "$MIN_GIT_VERSION" "$GIT_VERSION"
+GIT_VERSION_COMPARISON=$?
+set -e
+if [ $GIT_VERSION_COMPARISON -eq 2 ]; then
+  echo "Error: system git version ($GIT_VERSION) is older than required ($MIN_GIT_VERSION)."
+  exit 1
+fi
+
+exit 0
 
 # Check if install_dir already exists
 if [ -d "$(install_dir)" ]; then
