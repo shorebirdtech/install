@@ -83,7 +83,7 @@ if ! hash git 2>/dev/null; then
   exit 1
 fi
 
-MIN_GIT_VERSION="2.37.1"
+MIN_GIT_VERSION="2.25.1"
 GIT_VERSION=$(git --version | awk '{print $3}')
 set +e
 version_compare "$MIN_GIT_VERSION" "$GIT_VERSION"
