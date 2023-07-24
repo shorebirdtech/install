@@ -35,7 +35,7 @@ function Compare-GitVersions {
 }
 
 function Test-GitVersion {
-    $minGitVersion = "2.37.1"
+    $minGitVersion = "2.25.1"
     $gitVersion = (Get-Command git).FileVersionInfo.ProductVersion
 
     $comparisonResult = Compare-GitVersions -version1 $gitVersion -version2 $minGitVersion
