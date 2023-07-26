@@ -40,7 +40,7 @@ function Test-GitVersion {
 
     $comparisonResult = Compare-GitVersions -version1 $gitVersion -version2 $minGitVersion
     if ($comparisonResult -eq -1) {
-        Write-Output "Installed version $gitVersion is older than required version $minGitVersion."
+        Write-Output "Installed git version $gitVersion is older than required git version $minGitVersion."
         exit 1
     }
 }
