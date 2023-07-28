@@ -36,8 +36,7 @@ function Compare-GitVersions {
 
 function Test-GitVersion {
     $minGitVersion = "2.25.1"
-    $gitVersion = (Get-Command git).FileVersionInfo.ProductVersion
-
+    $gitVersion = (Get-Item (Get-Command git).Source).VersionInfo.ProductVersionRaw
     $comparisonResult = Compare-GitVersions -version1 $gitVersion -version2 $minGitVersion
     if ($comparisonResult -eq -1) {
         Write-Output "Installed git version $gitVersion is older than required git version $minGitVersion."
