@@ -1,3 +1,5 @@
+$ErrorActionPreference = "Stop"
+
 $installDirectory = [IO.Path]::Combine($home, ".shorebird")
 
 function Test-GitInstalled {
