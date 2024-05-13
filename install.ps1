@@ -62,7 +62,7 @@ function Update-Path {
 Test-GitInstalled
 Test-GitVersion
 
-$force = $args -contains "--force"
+$force = $true
 
 if (Test-Path $installDirectory) {
     if ($force) {
