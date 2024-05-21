@@ -100,7 +100,7 @@ if [ -d "$(install_dir)" ]; then
     echo "Existing Shorebird installation detected. Overwriting..."
     rm -rf "$(install_dir)"
   else
-    echo >&2 "Error: Existing Shorebird installation detected. Use --force to overwrite."
+    echo >&2 "Error: Existing Shorebird installation detected.\nTo overwrite, use: curl --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/shorebirdtech/install/main/install.sh -sSf | bash -s -- --force"
     exit 1
   fi
 fi
