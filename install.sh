@@ -129,10 +129,11 @@ if [ -d "$(install_dir)" ]; then
 fi
 
 # Clone the Shorebird repository into the install_dir
-echo "Cloning Shorebird (${TAG_NAME}) into $(install_dir)"
 if [ -z "${TAG_NAME}" ]; then
+  echo "Cloning Shorebird (STABLE) into $(install_dir)"
   git clone https://github.com/shorebirdtech/shorebird.git -b stable "$(install_dir)"
 else
+  echo "Cloning Shorebird (${TAG_NAME}) into $(install_dir)"
   git clone https://github.com/shorebirdtech/shorebird.git -b "${TAG_NAME}" "$(install_dir)"
 fi
 
