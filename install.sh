@@ -2,6 +2,24 @@
 
 set -e
 
+# # Parse command-line arguments
+# while getopts "i:e:b:" opt; do
+#   case ${opt} in
+#     i )
+#       IFS=',' read -r -a INCLUDE_PATTERNS <<< "$OPTARG"
+#       ;;
+#     e )
+#       IFS=',' read -r -a EXCLUDE_PATTERNS <<< "$OPTARG"
+#       ;;
+#     b )
+#       TARGET_BRANCH="$OPTARG"
+#       ;;
+#     \? )
+#       print_usage
+#       ;;
+#   esac
+# done
+
 install_dir() {
   [ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.shorebird" || printf %s "${XDG_CONFIG_HOME}/shorebird"
 }
@@ -107,7 +125,7 @@ fi
 
 # Clone the Shorebird repository into the install_dir
 echo "Cloning Shorebird into $(install_dir)"
-git clone https://github.com/shorebirdtech/shorebird.git -b stable "$(install_dir)"
+git clone https://github.com/shorebirdtech/shorebird.git -b v1.4.6 "$(install_dir)"
 
 # Build Shorebird
 (cd "$(install_dir)" && ./bin/shorebird --version)
