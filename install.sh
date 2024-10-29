@@ -2,23 +2,28 @@
 
 set -e
 
+## Function to print usage
+# example usage:
+# curl --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/shorebirdtech/install/main/install.sh -sSf | bash -s -- -b v1.4.7
+print_usage() {
+  echo "Usage: $0 [-b <branch>]"
+  echo "  -b Target Tag or Branch to clone (default: \"\")"
+  exit 1
+}
+
+TAG_NAME=""
+
 # # Parse command-line arguments
-# while getopts "i:e:b:" opt; do
-#   case ${opt} in
-#     i )
-#       IFS=',' read -r -a INCLUDE_PATTERNS <<< "$OPTARG"
-#       ;;
-#     e )
-#       IFS=',' read -r -a EXCLUDE_PATTERNS <<< "$OPTARG"
-#       ;;
-#     b )
-#       TARGET_BRANCH="$OPTARG"
-#       ;;
-#     \? )
-#       print_usage
-#       ;;
-#   esac
-# done
+while getopts "b:" opt; do
+  case ${opt} in
+    b )
+      TAG_NAME="$OPTARG"
+      ;;
+    \? )
+      print_usage
+      ;;
+  esac
+done
 
 install_dir() {
   [ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.shorebird" || printf %s "${XDG_CONFIG_HOME}/shorebird"
@@ -124,8 +129,12 @@ if [ -d "$(install_dir)" ]; then
 fi
 
 # Clone the Shorebird repository into the install_dir
-echo "Cloning Shorebird into $(install_dir)"
-git clone https://github.com/shorebirdtech/shorebird.git -b v1.4.6 "$(install_dir)"
+echo "Cloning Shorebird (${TAG_NAME}) into $(install_dir)"
+if [ -z "${TAG_NAME}" ]; then
+  git clone https://github.com/shorebirdtech/shorebird.git -b "${TAG_NAME}" "$(install_dir)"
+else
+  git clone https://github.com/shorebirdtech/shorebird.git -b stable "$(install_dir)"
+fi
 
 # Build Shorebird
 (cd "$(install_dir)" && ./bin/shorebird --version)
