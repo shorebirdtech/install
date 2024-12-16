@@ -132,10 +132,11 @@ Close and reopen your terminal to start using Shorebird or run the following com
 fi
 
 echo "
-To get started, run the following command:
+To create an account, visit: https://console.shorebird.dev
+Then to login, run:
 
-  shorebird --help
+  shorebird login
 
 For more information, visit:
-https://docs.shorebird.dev/
+https://docs.shorebird.dev
 "
