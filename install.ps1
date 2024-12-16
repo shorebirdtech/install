@@ -101,7 +101,7 @@ Please restart your terminal to start using Shorebird.
 
 Write-Output @"
 To create an account, visit: https://console.shorebird.dev
-Then to login, run:
+Then login using:
 
   shorebird login
 
