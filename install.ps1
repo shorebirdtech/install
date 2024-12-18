@@ -64,6 +64,20 @@ Test-GitVersion
 
 $force = $args -contains "--force"
 
+# Check if there is enough free space
+$requiredSpace = 1100MB # 1100 MiB
+$installDrive = (Split-Path -Qualifier $installDirectory).TrimEnd(':')
+$freeSpace = (Get-PSDrive -Name $installDrive).Free
+if ($freeSpace -lt $requiredSpace) {
+    if ($force) {
+        Write-Output "Attempting Shorebird install with less than 1100 MiB of free space."
+    }
+    else {
+        Write-Output "Error: Not enough free space. At least 1100 MiB is required. Use --force to install anyway."
+        exit 1
+    }
+}
+
 if (Test-Path $installDirectory) {
     if ($force) {
         Write-Output "Existing Shorebird installation detected. Overwriting..."

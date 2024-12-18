@@ -94,6 +94,18 @@ if [ $GIT_VERSION_COMPARISON -eq 2 ]; then
   exit 1
 fi
 
+# Check if there is enough free space
+REQUIRED_SPACE=$((1100 * 1024)) # 1100 MiB in KiB
+FREE_SPACE=$(df -k "$(dirname "$(install_dir)")" | tail -1 | awk '{print $4}')
+if [ $FREE_SPACE -lt $REQUIRED_SPACE ]; then
+  if [ "$FORCE" = true ]; then
+    echo "Attempting Shorebird install with less than 1100 MiB of free space."
+  else
+    echo >&2 "Error: Not enough free space. At least 1100 MiB is required. Use --force to install anyway."
+    exit 1
+  fi
+fi
+
 # Check if install_dir already exists
 if [ -d "$(install_dir)" ]; then
   if [ "$FORCE" = true ]; then
