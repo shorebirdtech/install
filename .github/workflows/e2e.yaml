@@ -28,3 +28,21 @@ jobs:
         if: matrix.os == 'windows-latest'
         run: ./install.ps1
         shell: pwsh
+
+      - name: 🔁 Rerun installer (bash)
+        if: matrix.os == 'macos-latest' || matrix.os == 'ubuntu-latest'
+        shell: bash
+        run: |
+          set +e
+          out=$(./install.sh 2>&1)
+          code=$?
+          echo "$out"
+          [ $code -eq 1 ] && echo "$out" | grep -q "already installed"
+
+      - name: 🔁 Rerun installer (powershell)
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          $out = ./install.ps1 | Out-String
+          Write-Output $out
+          if (-not $out.Contains("already installed")) { exit 1 }
