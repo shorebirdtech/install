@@ -7,8 +7,7 @@ function Test-GitInstalled {
         Write-Debug "Git is installed."
     }
     else {
-        Write-Output "No git installation detected. Git is required to use shorebird."
-        exit 1
+        throw "No git installation detected. Git is required to use shorebird."
     }
 }
 
@@ -41,8 +40,7 @@ function Test-GitVersion {
     $gitVersion = (Get-Item (Get-Command git).Source).VersionInfo.ProductVersionRaw
     $comparisonResult = Compare-GitVersions -version1 $gitVersion -version2 $minGitVersion
     if ($comparisonResult -eq -1) {
-        Write-Output "Installed git version $gitVersion is older than required git version $minGitVersion."
-        exit 1
+        throw "Installed git version $gitVersion is older than required git version $minGitVersion."
     }
 }
 
@@ -70,18 +68,56 @@ if (Test-Path $installDirectory) {
         Remove-Item -Recurse -Force $installDirectory
     }
     else {
-        Write-Output "Error: Existing Shorebird installation detected. Use --force to overwrite."
-        return
+        throw @"
+Shorebird is already installed at $installDirectory.
+
+To update it, run:
+
+  shorebird upgrade
+
+To delete it and install again, run:
+
+  Remove-Item -Recurse -Force $installDirectory
+  irm https://shorebird.dev/install.ps1 | iex
+"@
     }
+}
+
+# A fresh install (Shorebird, Flutter and the Dart SDK) needs about 2.5GB.
+$minFreeBytes = 3GB
+$freeBytes = (New-Object IO.DriveInfo ([IO.Path]::GetPathRoot($installDirectory))).AvailableFreeSpace
+if ($freeBytes -lt $minFreeBytes) {
+    $freeMB = [math]::Floor($freeBytes / 1MB)
+    throw "Not enough disk space to install Shorebird. Shorebird needs 3GB free on $([IO.Path]::GetPathRoot($installDirectory)); $($freeMB)MB is free."
 }
 
 Write-Output "Installing Shorebird to $installDirectory..."
 
-& git clone https://github.com/shorebirdtech/shorebird.git -b stable $installDirectory
+# If the install fails partway (a dropped connection, a full disk), remove
+# what was installed so running the installer again starts clean.
+try {
+    & git clone https://github.com/shorebirdtech/shorebird.git -b stable $installDirectory
+    if ($LASTEXITCODE -ne 0) { throw "git clone failed." }
 
-Push-Location $installDirectory\bin
-& .\shorebird.ps1 --version
-Pop-Location
+    Push-Location $installDirectory\bin
+    try {
+        & .\shorebird.ps1 --version
+        if ($LASTEXITCODE -ne 0) { throw "shorebird --version failed." }
+    }
+    finally {
+        Pop-Location
+    }
+}
+catch {
+    if (Test-Path $installDirectory) {
+        Remove-Item -Recurse -Force $installDirectory
+    }
+    throw @"
+Shorebird installation failed: $_
+Removed the partial install at $installDirectory.
+Fix the error above, then run the installer again.
+"@
+}
 
 $wasPathUpdated = Update-Path
 # 1F426 is the code for 🐦. See https://unicode.org/emoji/charts/full-emoji-list.html#1f426.
