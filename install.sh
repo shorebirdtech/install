@@ -6,23 +6,46 @@ install_dir() {
   [ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.shorebird" || printf %s "${XDG_CONFIG_HOME}/shorebird"
 }
 
+# Prints the rc file for the user's login shell (from $SHELL), or nothing if
+# the shell isn't one we know how to configure.
+shell_rc_file() {
+  case "$(basename "${SHELL-}")" in
+  zsh) printf %s "${ZDOTDIR:-$HOME}/.zshrc" ;;
+  bash)
+    # macOS Terminal starts bash as a login shell, which reads only the first
+    # of these that exists.
+    if [ "$(uname)" = "Darwin" ]; then
+      for profile in .bash_profile .bash_login .profile; do
+        if [ -f "$HOME/$profile" ]; then
+          printf %s "$HOME/$profile"
+          return
+        fi
+      done
+      printf %s "$HOME/.bash_profile"
+    else
+      printf %s "$HOME/.bashrc"
+    fi
+    ;;
+  esac
+}
+
 add_shorebird_to_path() {
   # Add the Shorebird CLI to your PATH.
-  echo "Adding Shorebird to your PATH"
+  path_line="export PATH=\"$(install_dir)/bin:\$PATH\""
+  rc_file="$(shell_rc_file)"
 
-  rc_files=("$HOME/.bashrc" "$HOME/.zshrc")
-  for rc_file in ${rc_files[@]}; do
-    if [[ -e "$rc_file" ]]; then
-      found_rc_file=true
-      echo "Updating $rc_file"
-      echo "export PATH=\"$(install_dir)/bin:\$PATH\"" >>$rc_file
-    fi
-  done
-
-  if [[ ! $found_rc_file ]]; then
-    echo "Unable to determine shell type. Please add Shorebird to your PATH manually."
-    echo "export PATH=\"$(install_dir)/bin:\$PATH\""
+  if [ -z "$rc_file" ]; then
+    echo "Unable to determine shell type. Please add Shorebird to your PATH manually:"
+    echo "  $path_line"
+    return
   fi
+
+  if [ -f "$rc_file" ] && grep -qF "$path_line" "$rc_file"; then
+    return
+  fi
+
+  echo "Adding Shorebird to your PATH in $rc_file"
+  echo "$path_line" >>"$rc_file"
 }
 
 # Function to compare two major.minor.patch versions
@@ -100,10 +123,52 @@ if [ -d "$(install_dir)" ]; then
     echo "Existing Shorebird installation detected. Overwriting..."
     rm -rf "$(install_dir)"
   else
-    echo >&2 "Error: Existing Shorebird installation detected. Use --force to overwrite."
+    reinstall="curl --proto '=https' --tlsv1.2 -sSfL https://shorebird.dev/install.sh | bash -s -- --force"
+    if [ -f "$(install_dir)/bin/cache/shorebird.snapshot" ]; then
+      echo >&2 "Error: Shorebird is already installed at $(install_dir).
+
+To update it, run:
+
+  shorebird upgrade
+
+To delete it and install again, run:
+
+  $reinstall"
+    else
+      echo >&2 "Error: A previous Shorebird install at $(install_dir) is incomplete.
+
+To delete it and install again, run:
+
+  $reinstall"
+    fi
     exit 1
   fi
 fi
+
+# A fresh install (Shorebird, Flutter and the Dart SDK) measured about 2.2GB.
+MIN_FREE_KB=$((3 * 1024 * 1024))
+install_parent="$(dirname "$(install_dir)")"
+[ -d "$install_parent" ] || install_parent="$HOME"
+FREE_KB=$(df -Pk "$install_parent" | awk 'NR==2 {print $4}')
+case "$FREE_KB" in '' | *[!0-9]*) FREE_KB="" ;; esac
+if [ -n "$FREE_KB" ] && [ "$FREE_KB" -lt "$MIN_FREE_KB" ]; then
+  echo >&2 "Error: Not enough disk space to install Shorebird.
+Shorebird needs 3GB free on the disk holding $install_parent; $((FREE_KB / 1024))MB is free."
+  exit 1
+fi
+
+# If the install fails partway (a dropped connection, a full disk), remove
+# what was installed so running the installer again starts clean.
+INSTALL_COMPLETE=false
+cleanup_failed_install() {
+  if [ "$INSTALL_COMPLETE" != true ] && [ -d "$(install_dir)" ]; then
+    rm -rf "$(install_dir)"
+    echo >&2 "
+Shorebird installation did not finish. Removed the partial install at $(install_dir).
+Run the installer again (after fixing any error above)."
+  fi
+}
+trap cleanup_failed_install EXIT
 
 # Clone the Shorebird repository into the install_dir
 echo "Cloning Shorebird into $(install_dir)"
@@ -111,6 +176,7 @@ git clone https://github.com/shorebirdtech/shorebird.git -b stable "$(install_di
 
 # Build Shorebird
 (cd "$(install_dir)" && ./bin/shorebird --version)
+INSTALL_COMPLETE=true
 
 RELOAD_REQUIRED=false
 SHOREBIRD_BIN="$(install_dir)/bin"
