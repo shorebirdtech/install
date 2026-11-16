@@ -1,0 +1,20 @@
+# Dependabot keeps the SHA-pinned GitHub Actions current. See
+# https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    # Wait for a release to age before we ever see the PR, so the ecosystem has
+    # time to flag a broken or compromised version first. Security updates
+    # bypass the cooldown automatically.
+    cooldown:
+      default-days: 5
+    groups:
+      # Actions are pinned to commit SHAs with the version in a comment;
+      # Dependabot bumps both together.
+      gha-deps:
+        patterns:
+          - "*"
